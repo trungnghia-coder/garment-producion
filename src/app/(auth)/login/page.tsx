@@ -75,24 +75,23 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* TODO: Replace div above with actual model image:
         <Image
-          src="/model.jpg"
+          src="/hero-banner.png"
           alt="NITIMO Fashion"
           fill
           className="object-cover"
           priority
         />
-        */}
+       
       </div>
 
       {/* Right — login form */}
       <div className="flex-1 flex flex-col items-center justify-center px-8 bg-white">
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-lg">
           {/* Mobile logo */}
           <div className="flex justify-center mb-8 lg:hidden">
             <Image
-              src="/logo.png"
+              src="/logo-color.png"
               alt="NITIMO"
               width={120}
               height={40}
@@ -101,17 +100,17 @@ export default function LoginPage() {
             />
           </div>
 
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+          <h1 className="text-3xl text-center font-bold text-gray-900 mb-1">
             Đăng nhập
           </h1>
-          <p className="text-sm text-gray-500 mb-8">
+          <p className="text-sm text-center text-gray-500 mb-8">
             Sử dụng tài khoản công ty để tiếp tục
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* Email */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-base font-medium text-gray-700">
                 Email công ty
               </label>
               <input
@@ -120,13 +119,13 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="px-3.5 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#8B1A1A] focus:ring-2 focus:ring-[#8B1A1A]/10 transition-all placeholder:text-gray-400"
+                className="px-3.5 py-2.5 text-base border border-gray-200 rounded-lg outline-none focus:border-[#8B1A1A] focus:ring-2 focus:ring-[#8B1A1A]/10 transition-all placeholder:text-gray-400"
               />
             </div>
 
             {/* Password */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-base font-medium text-gray-700">
                 Mật khẩu
               </label>
               <input
@@ -135,7 +134,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="px-3.5 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#8B1A1A] focus:ring-2 focus:ring-[#8B1A1A]/10 transition-all placeholder:text-gray-400"
+                className="px-3.5 py-2.5 text-base border border-gray-200 rounded-lg outline-none focus:border-[#8B1A1A] focus:ring-2 focus:ring-[#8B1A1A]/10 transition-all placeholder:text-gray-400"
               />
             </div>
 
