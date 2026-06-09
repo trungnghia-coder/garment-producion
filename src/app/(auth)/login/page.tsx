@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { login } from "@/lib/firebase/auth";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,17 +13,17 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    // Validate @nitimo.com domain
-    if (!email.endsWith("@nitimo.com")) {
-      setError("Vui lòng sử dụng email công ty @nitimo.com");
-      setLoading(false);
-      return;
-    }
+    //TODO: Validate @nitimo.com domain
+    // if (!email.endsWith("@nitimo.com")) {
+    //   setError("Vui lòng sử dụng email công ty @nitimo.com");
+    //   setLoading(false);
+    //   return;
+    // }
 
     if (!password) {
       setError("Vui lòng nhập mật khẩu");
@@ -29,11 +31,30 @@ export default function LoginPage() {
       return;
     }
 
-    // TODO: Replace with Firebase Auth
-    // Temporary mock auth
-    await new Promise((r) => setTimeout(r, 800));
-    router.push("/dashboard");
-    setLoading(false);
+    try {
+      const userCredential = await login(email, password);
+      const idToken = await userCredential.user.getIdToken();
+
+      const res = await fetch("/api/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!res.ok) throw new Error("Không thể tạo session");
+
+      toast.success("Đăng nhập thành công!");
+      router.push("/dashboard");
+    } catch (err) {
+      const code = (err as { code?: string })?.code;
+      if (code === "auth/invalid-credential") {
+        setError("Email hoặc mật khẩu không đúng");
+      } else {
+        setError("Đã có lỗi xảy ra, vui lòng thử lại");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -110,11 +131,12 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* Email */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-base font-medium text-gray-700">
+              <label htmlFor="email" className="text-base font-medium text-gray-700">
                 Email công ty
               </label>
               <input
                 type="email"
+                id="email"
                 placeholder="ten@nitimo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -125,11 +147,12 @@ export default function LoginPage() {
 
             {/* Password */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-base font-medium text-gray-700">
+              <label htmlFor="password" className="text-base font-medium text-gray-700">
                 Mật khẩu
               </label>
               <input
                 type="password"
+                id="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
