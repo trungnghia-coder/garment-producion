@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  bundlePagesRouterDependencies: true,
+  serverExternalPackages: ["firebase-admin"],
 };
 
 export default nextConfig;
