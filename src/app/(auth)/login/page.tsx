@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/firebase/auth";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
+      toast.success("Đăng nhập thành công!");
       router.push("/dashboard");
     } catch (err) {
       if (err instanceof Error) {
@@ -44,6 +46,8 @@ export default function LoginPage() {
       } else {
         setError("Đã có lỗi xảy ra, vui lòng thử lại");
       }
+    }finally {
+      setLoading(false);
     }
   };
 
