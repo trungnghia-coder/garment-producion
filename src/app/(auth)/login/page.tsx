@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { login } from "@/lib/firebase/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,12 +17,12 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    // Validate @nitimo.com domain
-    if (!email.endsWith("@nitimo.com")) {
-      setError("Vui lòng sử dụng email công ty @nitimo.com");
-      setLoading(false);
-      return;
-    }
+    //TODO: Validate @nitimo.com domain
+    // if (!email.endsWith("@nitimo.com")) {
+    //   setError("Vui lòng sử dụng email công ty @nitimo.com");
+    //   setLoading(false);
+    //   return;
+    // }
 
     if (!password) {
       setError("Vui lòng nhập mật khẩu");
@@ -29,11 +30,21 @@ export default function LoginPage() {
       return;
     }
 
-    // TODO: Replace with Firebase Auth
-    // Temporary mock auth
-    await new Promise((r) => setTimeout(r, 800));
-    router.push("/dashboard");
-    setLoading(false);
+    try {
+      await login(email, password);
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof Error) {
+        const firebaseErr = err as { code?: string; message: string };
+        if (firebaseErr.code === "auth/invalid-credential") {
+          setError("Email hoặc mật khẩu không đúng");
+        } else {
+          setError(firebaseErr.message);
+        }
+      } else {
+        setError("Đã có lỗi xảy ra, vui lòng thử lại");
+      }
+    }
   };
 
   return (
