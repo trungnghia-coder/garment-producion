@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -125,11 +125,12 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* Email */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-base font-medium text-gray-700">
+              <label htmlFor="email" className="text-base font-medium text-gray-700">
                 Email công ty
               </label>
               <input
                 type="email"
+                id="email"
                 placeholder="ten@nitimo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -140,11 +141,12 @@ export default function LoginPage() {
 
             {/* Password */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-base font-medium text-gray-700">
+              <label htmlFor="password" className="text-base font-medium text-gray-700">
                 Mật khẩu
               </label>
               <input
                 type="password"
+                id="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
