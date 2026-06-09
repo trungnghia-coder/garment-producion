@@ -32,21 +32,27 @@ export default function LoginPage() {
     }
 
     try {
-      await login(email, password);
+      const userCredential = await login(email, password);
+      const idToken = await userCredential.user.getIdToken();
+
+      const res = await fetch("/api/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!res.ok) throw new Error("Không thể tạo session");
+
       toast.success("Đăng nhập thành công!");
       router.push("/dashboard");
     } catch (err) {
-      if (err instanceof Error) {
-        const firebaseErr = err as { code?: string; message: string };
-        if (firebaseErr.code === "auth/invalid-credential") {
-          setError("Email hoặc mật khẩu không đúng");
-        } else {
-          setError(firebaseErr.message);
-        }
+      const code = (err as { code?: string })?.code;
+      if (code === "auth/invalid-credential") {
+        setError("Email hoặc mật khẩu không đúng");
       } else {
         setError("Đã có lỗi xảy ra, vui lòng thử lại");
       }
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
