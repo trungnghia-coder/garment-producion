@@ -1,9 +1,12 @@
 export interface Stage {
   id: string;
   name: string;
-  price: number;
-  unitPrice: number;
-  type: string;
+  price_company: number;
+  price_market: number;
+  type_id: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface OrderItem extends Stage {
