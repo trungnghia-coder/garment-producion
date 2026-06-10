@@ -4,9 +4,10 @@ import { useState, useCallback } from "react";
 import StageList from "@/components/stages/StageList";
 import OrderTable from "@/components/orders/OrderTable";
 import { Stage, OrderItem } from "@/types/stage";
-import { MOCK_STAGES } from "@/lib/mock-data";
+import { useStages } from "@/hooks/useStage";
 
 export default function DashboardPage() {
+  const { stages, loading } = useStages();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [syncQty, setSyncQty] = useState(0);
@@ -61,10 +62,12 @@ export default function DashboardPage() {
     alert("Mở modal thêm công đoạn mới!");
   }, []);
 
+  if (loading) return <p>Đang tải...</p>;
+
   return (
     <main className="flex-1 flex gap-5 p-5 overflow-hidden">
       <StageList
-        stages={MOCK_STAGES}
+        stages={stages}
         selectedIds={selectedIds}
         onToggle={handleToggle}
         onAdd={handleAdd}

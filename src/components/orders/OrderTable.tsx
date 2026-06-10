@@ -89,8 +89,8 @@ export default function OrderTable({
                         className="w-16 px-2 py-1 text-sm border border-gray-200 rounded-md outline-none focus:border-[#8B1A1A] text-center"
                       />
                     </TD>
-                    <TD>{item.price.toLocaleString("vi-VN")}</TD>
-                    <TD>{item.unitPrice.toLocaleString("vi-VN")}</TD>
+                    <TD>{item.price_company.toLocaleString("vi-VN")}</TD>
+                    <TD>{item.price_market.toLocaleString("vi-VN")}</TD>
                     <TD>{item.qty}</TD>
                     <TD>{item.qtyMay}</TD>
                     <TD>{item.slMay}</TD>
@@ -103,7 +103,7 @@ export default function OrderTable({
                     >
                       {item.slConLai}
                     </TD>
-                    <TD>{item.type}</TD>
+                    <TD>{item.type_id}</TD>
                   </tr>
                 ))
               )}

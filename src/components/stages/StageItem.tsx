@@ -17,7 +17,7 @@ export default function StageItem({ stage, isSelected, onToggle }: StageItemProp
       <div className="min-w-0">
         <p className="text-sm font-medium text-gray-800 truncate">{stage.name}</p>
         <p className="text-xs text-gray-400 mt-0.5">
-          {stage.price} / {stage.unitPrice}
+          {stage.price_company.toLocaleString("vi-VN")} / {stage.price_market.toLocaleString("vi-VN")}
         </p>
       </div>
       <div
