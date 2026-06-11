@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { getStages } from "@/lib/firebase/stages";
-import { Stage } from "@/types/stage";
+import { getStages, getStagesByMaterial } from "@/lib/firebase/stages";
+import { Stage, StageWithPrice } from "@/types/stage";
 
-export function useStages() {
-  const [stages, setStages] = useState<Stage[]>([]);
+export function useStages(materialId?: string) {
+  const [stages, setStages] = useState<Stage[] | StageWithPrice[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getStages()
-      .then(setStages)
-      .finally(() => setLoading(false));
-  }, []);
+    const fetch = materialId ? getStagesByMaterial(materialId) : getStages();
+
+    fetch.then(setStages).finally(() => setLoading(false));
+  }, [materialId]);
 
   return { stages, loading };
 }
