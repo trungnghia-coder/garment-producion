@@ -1,11 +1,11 @@
 "use client";
 
-import { Stage } from "@/types/stage";
+import { Stage, StageWithPrice } from "@/types/stage";
 
 interface StageItemProps {
-  stage: Stage;
+  stage: StageWithPrice;
   isSelected: boolean;
-  onToggle: (stage: Stage) => void;
+  onToggle: (stage: StageWithPrice) => void;
 }
 
 export default function StageItem({ stage, isSelected, onToggle }: StageItemProps) {
