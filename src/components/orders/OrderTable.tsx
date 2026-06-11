@@ -54,19 +54,14 @@ export default function OrderTable({
                 <TH className="w-12">STT</TH>
                 <TH>Tên công đoạn</TH>
                 <TH>Số lượng cắt</TH>
-                <TH>Giá thành</TH>
-                <TH>Giá thành</TH>
-                <TH>SL cắt</TH>
-                <TH>CN may</TH>
-                <TH>SL may</TH>
-                <TH>SL Còn lại</TH>
-                <TH>Loại công đoạn</TH>
+                <TH>Giá công ty</TH>
+                <TH>Giá thị trường</TH>
               </tr>
             </thead>
             <tbody>
               {items.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-16 text-sm text-gray-400">
+                  <td colSpan={5} className="text-center py-16 text-sm text-gray-400">
                     Chọn công đoạn bên trái để thêm vào bảng
                   </td>
                 </tr>
@@ -89,21 +84,8 @@ export default function OrderTable({
                         className="w-16 px-2 py-1 text-sm border border-gray-200 rounded-md outline-none focus:border-[#8B1A1A] text-center"
                       />
                     </TD>
-                    <TD>{item.price_company.toLocaleString("vi-VN")}</TD>
-                    <TD>{item.price_market.toLocaleString("vi-VN")}</TD>
-                    <TD>{item.qty}</TD>
-                    <TD>{item.qtyMay}</TD>
-                    <TD>{item.slMay}</TD>
-                    <TD
-                      className={
-                        item.slConLai < 0
-                          ? "text-red-600 font-medium"
-                          : "text-gray-700"
-                      }
-                    >
-                      {item.slConLai}
-                    </TD>
-                    <TD>{item.type_id}</TD>
+                    <TD>{item.price_company.toLocaleString("vi-VN")}đ</TD>
+                    <TD>{item.price_market.toLocaleString("vi-VN")}đ</TD>
                   </tr>
                 ))
               )}
@@ -124,7 +106,7 @@ export default function OrderTable({
           onClick={onExport}
           className="px-5 py-2 text-sm font-medium text-white bg-[#1D6B3B] rounded-lg hover:bg-[#185e33] transition-colors"
         >
-          In Excel
+          In PDF
         </button>
       </div>
     </div>
