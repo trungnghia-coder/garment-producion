@@ -9,6 +9,7 @@ import { StageWithPrice, OrderItem } from "@/types/stage";
 import { useStages } from "@/hooks/useStage";
 import { getGarmentTypes, GarmentType } from "@/lib/firebase/garment-types";
 import PriceSummary from "@/components/orders/PriceSummary";
+import { printPDF } from "@/lib/print-pdf";
 
 export default function StagesByMaterialPage() {
   const { materialId } = useParams<{ materialId: string }>();
@@ -67,8 +68,12 @@ export default function StagesByMaterialPage() {
   }, []);
 
   const handleExport = useCallback(() => {
-    alert("Tính năng export Excel sẽ được tích hợp!");
-  }, []);
+    if (orderItems.length === 0) {
+      alert("Chưa có công đoạn nào trong bảng!");
+      return;
+    }
+    printPDF(orderItems, garmentTypes, productCode, syncQty);
+  }, [orderItems, garmentTypes, productCode, syncQty]);
 
   const handleAdd = useCallback(() => {
     alert("Mở modal thêm công đoạn mới!");
