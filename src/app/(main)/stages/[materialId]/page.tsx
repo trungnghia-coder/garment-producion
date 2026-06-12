@@ -54,9 +54,11 @@ export default function StagesByMaterialPage() {
   }, [syncQty]);
 
   const handleClear = useCallback(() => {
-    setOrderItems([]);
-    setSelectedIds(new Set());
-    setSyncQty(0);
+    if (window.confirm("Bạn chắc chắn muốn xóa tất cả công đoạn đã thêm?")) {
+      setOrderItems([]);
+      setSelectedIds(new Set());
+      setSyncQty(0);
+    }
   }, []);
 
   const handleExport = useCallback(() => {
