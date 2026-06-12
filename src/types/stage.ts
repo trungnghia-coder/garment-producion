@@ -1,17 +1,17 @@
 export interface Stage {
   id: string;
   name: string;
-  price_company: number;
-  price_market: number;
   type_id: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface OrderItem extends Stage {
+export interface StageWithPrice extends Stage {
+  price_company: number;
+  price_market: number;
+}
+
+export interface OrderItem extends StageWithPrice {
   qty: number;
-  qtyMay: number;
-  slMay: number;
-  slConLai: number;
 }

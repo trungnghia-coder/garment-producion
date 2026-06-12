@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Stage } from "@/types/stage";
 import StageItem from "./StageItem";
+import { StageWithPrice } from "@/types/stage";
 
 interface StageListProps {
-  stages: Stage[];
+  stages: StageWithPrice [];
   selectedIds: Set<string>;
-  onToggle: (stage: Stage) => void;
+  onToggle: (stage: StageWithPrice) => void;
   onAdd: () => void;
 }
 
