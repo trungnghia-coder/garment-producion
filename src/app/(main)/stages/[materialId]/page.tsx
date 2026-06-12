@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import StageList from "@/components/stages/StageList";
 import OrderTable from "@/components/orders/OrderTable";
 import { StageWithPrice, OrderItem } from "@/types/stage";
 import { useStages } from "@/hooks/useStage";
+import { getGarmentTypes, GarmentType } from "@/lib/firebase/garment-types";
+import PriceSummary from "@/components/orders/PriceSummary";
 
 export default function StagesByMaterialPage() {
   const { materialId } = useParams<{ materialId: string }>();
@@ -17,6 +19,8 @@ export default function StagesByMaterialPage() {
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [syncQty, setSyncQty] = useState(0);
   const [productCode, setProductCode] = useState("");
+  const [garmentTypes, setGarmentTypes] = useState<GarmentType[]>([]);
+  
 
   const handleToggle = useCallback((stage: StageWithPrice) => {
     const isSelected = selectedIds.has(stage.id);
@@ -70,6 +74,10 @@ export default function StagesByMaterialPage() {
     alert("Mở modal thêm công đoạn mới!");
   }, []);
 
+  useEffect(() => {
+    getGarmentTypes().then(setGarmentTypes);
+  }, []);
+
   if (loading) return <p className="p-5">Đang tải...</p>;
 
   return (
@@ -102,6 +110,9 @@ export default function StagesByMaterialPage() {
           onProductCodeChange={setProductCode}
         />
       </main>
+      <div className="px-5 pb-5">
+        <PriceSummary items={orderItems} garmentTypes={garmentTypes} />
+      </div>
     </div>
   );
 }
