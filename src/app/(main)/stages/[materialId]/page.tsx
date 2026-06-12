@@ -35,6 +35,10 @@ export default function StagesByMaterialPage() {
     }
   }, [selectedIds]);
 
+  const handleSyncQtyChange = useCallback((qty: number) => {
+    setSyncQty(qty);
+  }, []);
+
   const handleQtyChange = useCallback((id: string, qty: number) => {
     setOrderItems((items) =>
       items.map((item) =>
@@ -46,9 +50,8 @@ export default function StagesByMaterialPage() {
   }, []);
 
   const handleSync = useCallback(() => {
-    const total = orderItems.reduce((sum, i) => sum + i.qty, 0);
-    setSyncQty(total);
-  }, [orderItems]);
+    setOrderItems((items) => items.map((item) => ({ ...item, qty: syncQty })));
+  }, [syncQty]);
 
   const handleClear = useCallback(() => {
     setOrderItems([]);
@@ -91,6 +94,7 @@ export default function StagesByMaterialPage() {
           onClear={handleClear}
           onExport={handleExport}
           onQtyChange={handleQtyChange}
+          onSyncQtyChange={handleSyncQtyChange}
         />
       </main>
     </div>

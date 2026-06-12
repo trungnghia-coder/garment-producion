@@ -5,6 +5,7 @@ import { OrderItem } from "@/types/stage";
 interface OrderTableProps {
   items: OrderItem[];
   syncQty: number;
+  onSyncQtyChange: (qty: number) => void;
   onSync: () => void;
   onClear: () => void;
   onExport: () => void;
@@ -28,15 +29,21 @@ export default function OrderTable({
   onClear,
   onExport,
   onQtyChange,
+  onSyncQtyChange,
 }: OrderTableProps) {
   return (
     <div className="flex-1 flex flex-col min-w-0">
       {/* Sync bar */}
       <div className="flex items-center gap-3 mb-3">
-        <span className="text-sm text-gray-600">
-          Đồng bộ số lượng cắt:{" "}
-          <span className="font-semibold text-gray-800">{syncQty}</span>
-        </span>
+        <span className="text-sm text-gray-600">Đồng bộ số lượng cắt:</span>
+        <input
+          type="number"
+          min={0}
+          value={syncQty || ""}
+          onChange={(e) => onSyncQtyChange(Number(e.target.value))}
+          className="w-20 px-2 py-1.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#8B1A1A] text-center"
+          placeholder="0"
+        />
         <button
           onClick={onSync}
           className="px-4 py-1.5 text-sm font-medium text-white bg-[#8B1A1A] rounded-lg hover:bg-[#7a1616] transition-colors"
