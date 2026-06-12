@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Nitimo — Quản lý công đoạn",
-  description: "Hệ thống quản lý công đoạn sản xuất quần áo",
+  title: "Nitimo — Quản lý hệ thống",
+  description: "Hệ thống quản lý",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
