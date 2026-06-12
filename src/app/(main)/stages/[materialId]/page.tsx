@@ -16,6 +16,7 @@ export default function StagesByMaterialPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [syncQty, setSyncQty] = useState(0);
+  const [productCode, setProductCode] = useState("");
 
   const handleToggle = useCallback((stage: StageWithPrice) => {
     const isSelected = selectedIds.has(stage.id);
@@ -97,6 +98,8 @@ export default function StagesByMaterialPage() {
           onExport={handleExport}
           onQtyChange={handleQtyChange}
           onSyncQtyChange={handleSyncQtyChange}
+          productCode={productCode}
+          onProductCodeChange={setProductCode}
         />
       </main>
     </div>

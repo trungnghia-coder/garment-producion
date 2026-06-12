@@ -1,6 +1,7 @@
 "use client";
 
 import { OrderItem } from "@/types/stage";
+import { useState } from "react";
 
 interface OrderTableProps {
   items: OrderItem[];
@@ -10,6 +11,8 @@ interface OrderTableProps {
   onClear: () => void;
   onExport: () => void;
   onQtyChange: (id: string, qty: number) => void;
+  productCode: string;
+  onProductCodeChange: (code: string) => void;
 }
 
 const TH = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
@@ -22,6 +25,7 @@ const TD = ({ children, className = "" }: { children: React.ReactNode; className
   <td className={`px-4 py-3 text-sm text-gray-700 ${className}`}>{children}</td>
 );
 
+
 export default function OrderTable({
   items,
   syncQty,
@@ -30,26 +34,45 @@ export default function OrderTable({
   onExport,
   onQtyChange,
   onSyncQtyChange,
+  productCode,
+  onProductCodeChange,
 }: OrderTableProps) {
   return (
     <div className="flex-1 flex flex-col min-w-0">
-      {/* Sync bar */}
-      <div className="flex items-center gap-3 mb-3">
-        <span className="text-sm text-gray-600">Đồng bộ số lượng cắt:</span>
-        <input
-          type="number"
-          min={0}
-          value={syncQty || ""}
-          onChange={(e) => onSyncQtyChange(Number(e.target.value))}
-          className="w-20 px-2 py-1.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#8B1A1A] text-center"
-          placeholder="0"
-        />
-        <button
-          onClick={onSync}
-          className="px-4 py-1.5 text-sm font-medium text-white bg-[#8B1A1A] rounded-lg hover:bg-[#7a1616] transition-colors"
-        >
-          Đồng bộ
-        </button>
+      {/* Toolbar */}
+      <div className="flex items-center gap-4 mb-3">
+        {/* Mã sản phẩm */}
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600 whitespace-nowrap">Mã sản phẩm:</label>
+          <input
+            type="text"
+            value={productCode}
+            onChange={(e) => onProductCodeChange(e.target.value)}
+            placeholder="VD: 053302"
+            className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#8B1A1A] w-100"
+          />
+        </div>
+
+        <div className="w-px h-5 bg-gray-200" /> {/* Divider */}
+
+        {/* Đồng bộ */}
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600 whitespace-nowrap">Đồng bộ số lượng cắt:</label>
+          <input
+            type="number"
+            min={0}
+            value={syncQty || ""}
+            onChange={(e) => onSyncQtyChange(Number(e.target.value))}
+            placeholder="0"
+            className="w-20 px-2 py-1.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#8B1A1A] text-center"
+          />
+          <button
+            onClick={onSync}
+            className="px-4 py-1.5 text-sm font-medium text-white bg-[#8B1A1A] rounded-lg hover:bg-[#7a1616] transition-colors"
+          >
+            Đồng bộ
+          </button>
+        </div>
       </div>
 
       {/* Table */}
