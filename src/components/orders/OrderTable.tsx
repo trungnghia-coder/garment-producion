@@ -2,7 +2,7 @@
 
 import { OrderItem } from "@/types/stage";
 import { GarmentType } from "@/lib/firebase/garment-types";
-import { Pin, PinOff, Trash2 } from "lucide-react";
+import { Pin, Trash2, History } from "lucide-react";
 import { useState } from "react";
 
 interface OrderTableProps {
@@ -13,7 +13,8 @@ interface OrderTableProps {
   onClear: () => void;
   onExport: () => void;
   onQtyChange: (id: string, qty: number) => void;
-  onRemove: (id: string) => void;      
+  onRemove: (id: string) => void; 
+  onHistory: () => void;     
   productCode: string;
   onProductCodeChange: (code: string) => void;
   garmentTypes: GarmentType[];
@@ -52,6 +53,7 @@ export default function OrderTable({
   onQtyChange,
   onRemove,
   onSyncQtyChange,
+  onHistory,
   productCode,
   onProductCodeChange,
   garmentTypes = [],
@@ -188,6 +190,13 @@ export default function OrderTable({
 
       {/* Footer */}
       <div className="flex justify-end gap-3 mt-4">
+        <button
+          onClick={onHistory}
+          className="flex items-center gap-2 px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          <History size={15} />
+          Lịch sử
+        </button>
         <button
           onClick={onClear}
           className="px-5 py-2 text-sm font-medium text-gray-800 bg-[#F0B429] rounded-lg hover:bg-[#e0a820] transition-colors"
