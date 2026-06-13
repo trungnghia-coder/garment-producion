@@ -2,6 +2,7 @@
 
 import { OrderItem } from "@/types/stage";
 import { GarmentType } from "@/lib/firebase/garment-types";
+import { Pin, PinOff, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 interface OrderTableProps {
@@ -162,22 +163,17 @@ export default function OrderTable({
                           <button
                             onClick={() => togglePin(item)}
                             title={isPinned ? "Bỏ ghim" : "Ghim công đoạn này"}
-                            className={`text-lg transition-transform hover:scale-110 ${isPinned ? "opacity-100" : "opacity-30 hover:opacity-70"}`}
+                            className={`transition-all hover:scale-110 ${isPinned ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
                           >
-                            📌
+                            {isPinned ? <Pin className="w-6 h-6 fill-yellow-500" /> : <Pin className="w-6 h-6" />}
                           </button>
                           {/* Nút xóa */}
                           <button
                             onClick={() => onRemove(item.id)}
                             title="Xóa khỏi bảng"
-                            className="text-gray-400 hover:text-red-500 transition-colors"
+                            className="text-gray-300 hover:text-red-500 transition-colors"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="3 6 5 6 21 6" />
-                              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                              <path d="M10 11v6M14 11v6" />
-                              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                            </svg>
+                            <Trash2 className="w-6 h-6" />
                           </button>
                         </div>
                       </TD>
