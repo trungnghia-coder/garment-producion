@@ -16,8 +16,8 @@ export default function PriceSummary({ items, garmentTypes }: PriceSummaryProps)
     const typeItems = items.filter((i) => i.type_id === type.id);
     if (typeItems.length === 0) return null;
 
-    const totalCompany = typeItems.reduce((sum, i) => sum + i.price_company * i.qty, 0);
-    const totalMarket = typeItems.reduce((sum, i) => sum + i.price_market * i.qty, 0);
+    const totalCompany = typeItems.reduce((sum, i) => sum + i.price_company, 0);
+    const totalMarket = typeItems.reduce((sum, i) => sum + i.price_market, 0);
 
     return { type, totalCompany, totalMarket };
   }).filter(Boolean) as { type: GarmentType; totalCompany: number; totalMarket: number }[];
