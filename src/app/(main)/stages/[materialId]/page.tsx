@@ -10,6 +10,7 @@ import { useStages } from "@/hooks/useStage";
 import { getGarmentTypes, GarmentType } from "@/lib/firebase/garment-types";
 import PriceSummary from "@/components/orders/PriceSummary";
 import { printPDF } from "@/lib/print-pdf";
+import { saveOrder } from "@/lib/firebase/order";
 
 export default function StagesByMaterialPage() {
   const { materialId } = useParams<{ materialId: string }>();
@@ -67,12 +68,16 @@ export default function StagesByMaterialPage() {
     }
   }, []);
 
-  const handleExport = useCallback(() => {
+  const handleExport = useCallback(async () => {
     if (orderItems.length === 0) {
       alert("Chưa có công đoạn nào trong bảng!");
       return;
     }
     printPDF(orderItems, garmentTypes, productCode, syncQty);
+
+    if (productCode && orderItems.length > 0) {
+      await saveOrder(productCode, orderItems, syncQty);
+    }
   }, [orderItems, garmentTypes, productCode, syncQty]);
 
   const handleAdd = useCallback(() => {
