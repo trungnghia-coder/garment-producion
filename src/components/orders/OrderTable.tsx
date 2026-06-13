@@ -1,6 +1,8 @@
 "use client";
 
 import { OrderItem } from "@/types/stage";
+import { GarmentType } from "@/lib/firebase/garment-types";
+import { Pin, Trash2, History } from "lucide-react";
 import { useState } from "react";
 
 interface OrderTableProps {
@@ -11,8 +13,25 @@ interface OrderTableProps {
   onClear: () => void;
   onExport: () => void;
   onQtyChange: (id: string, qty: number) => void;
+  onRemove: (id: string) => void; 
+  onHistory: () => void;     
   productCode: string;
   onProductCodeChange: (code: string) => void;
+  garmentTypes: GarmentType[];
+}
+
+const PINNED_KEY = "pinned_stage_ids";
+
+function getPinnedIds(): string[] {
+  try {
+    return JSON.parse(localStorage.getItem(PINNED_KEY) ?? "[]");
+  } catch {
+    return [];
+  }
+}
+
+function savePinnedIds(ids: string[]) {
+  localStorage.setItem(PINNED_KEY, JSON.stringify(ids));
 }
 
 const TH = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
@@ -25,7 +44,6 @@ const TD = ({ children, className = "" }: { children: React.ReactNode; className
   <td className={`px-4 py-3 text-sm text-gray-700 ${className}`}>{children}</td>
 );
 
-
 export default function OrderTable({
   items,
   syncQty,
@@ -33,15 +51,32 @@ export default function OrderTable({
   onClear,
   onExport,
   onQtyChange,
+  onRemove,
   onSyncQtyChange,
+  onHistory,
   productCode,
   onProductCodeChange,
+  garmentTypes = [],
 }: OrderTableProps) {
+
+  const [pinnedIds, setPinnedIds] = useState<string[]>(() => getPinnedIds());
+
+  const typeMap = new Map((garmentTypes ?? []).map((t) => [t.id, t.name]));
+
+  const togglePin = (item: OrderItem) => {
+    const current = getPinnedIds();
+    const isAlreadyPinned = current.includes(item.id);
+    const updated = isAlreadyPinned
+      ? current.filter((id) => id !== item.id)
+      : [...current, item.id];
+    savePinnedIds(updated);
+    setPinnedIds(updated);
+  };
+
   return (
     <div className="flex-1 flex flex-col min-w-0">
       {/* Toolbar */}
       <div className="flex items-center gap-4 mb-3">
-        {/* Mã sản phẩm */}
         <div className="flex items-center gap-2">
           <label className="text-sm text-gray-600 whitespace-nowrap">Mã sản phẩm:</label>
           <input
@@ -53,9 +88,8 @@ export default function OrderTable({
           />
         </div>
 
-        <div className="w-px h-5 bg-gray-200" /> {/* Divider */}
+        <div className="w-px h-5 bg-gray-200" />
 
-        {/* Đồng bộ */}
         <div className="flex items-center gap-2">
           <label className="text-sm text-gray-600 whitespace-nowrap">Đồng bộ số lượng cắt:</label>
           <input
@@ -82,50 +116,87 @@ export default function OrderTable({
             <thead className="sticky top-0 bg-white z-10">
               <tr className="border-b border-gray-200">
                 <TH className="w-12">STT</TH>
+                <TH>Loại</TH>
                 <TH>Tên công đoạn</TH>
                 <TH>Số lượng cắt</TH>
                 <TH>Giá công ty</TH>
                 <TH>Giá thị trường</TH>
+                <TH className="text-center">Thao tác</TH>
               </tr>
             </thead>
             <tbody>
               {items.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-16 text-sm text-gray-400">
+                  <td colSpan={7} className="text-center py-16 text-sm text-gray-400">
                     Chọn công đoạn bên trái để thêm vào bảng
                   </td>
                 </tr>
               ) : (
-                items.map((item, idx) => (
-                  <tr
-                    key={item.id}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                  >
-                    <TD className="text-center font-medium text-gray-500">
-                      {String(idx + 1).padStart(2, "0")}
-                    </TD>
-                    <TD className="font-medium">{item.name}</TD>
-                    <TD>
-                      <input
-                        type="number"
-                        min={0}
-                        value={item.qty}
-                        onChange={(e) => onQtyChange(item.id, Number(e.target.value))}
-                        className="w-16 px-2 py-1 text-sm border border-gray-200 rounded-md outline-none focus:border-[#8B1A1A] text-center"
-                      />
-                    </TD>
-                    <TD>{item.price_company.toLocaleString("vi-VN")}đ</TD>
-                    <TD>{item.price_market.toLocaleString("vi-VN")}đ</TD>
-                  </tr>
-                ))
+                items.map((item, idx) => {
+                  const isPinned = pinnedIds.includes(item.id);
+                  return (
+                    <tr
+                      key={item.id}
+                      className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${isPinned ? "bg-yellow-50" : ""}`}
+                    >
+                      <TD className="text-center font-medium text-gray-500">
+                        {String(idx + 1).padStart(2, "0")}
+                      </TD>
+                      <TD>
+                        <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600 whitespace-nowrap">
+                          {typeMap.get(item.type_id) ?? "—"}
+                        </span>
+                      </TD>
+                      <TD className="font-medium">{item.name}</TD>
+                      <TD>
+                        <input
+                          type="number"
+                          min={0}
+                          value={item.qty}
+                          onChange={(e) => onQtyChange(item.id, Number(e.target.value))}
+                          className="w-16 px-2 py-1 text-sm border border-gray-200 rounded-md outline-none focus:border-[#8B1A1A] text-center"
+                        />
+                      </TD>
+                      <TD>{item.price_company.toLocaleString("vi-VN")}đ</TD>
+                      <TD>{item.price_market.toLocaleString("vi-VN")}đ</TD>
+                      <TD className="text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          {/* Nút ghim */}
+                          <button
+                            onClick={() => togglePin(item)}
+                            title={isPinned ? "Bỏ ghim" : "Ghim công đoạn này"}
+                            className={`transition-all hover:scale-110 ${isPinned ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
+                          >
+                            {isPinned ? <Pin className="w-6 h-6 fill-yellow-500" /> : <Pin className="w-6 h-6" />}
+                          </button>
+                          {/* Nút xóa */}
+                          <button
+                            onClick={() => onRemove(item.id)}
+                            title="Xóa khỏi bảng"
+                            className="text-gray-300 hover:text-red-500 transition-colors"
+                          >
+                            <Trash2 className="w-6 h-6" />
+                          </button>
+                        </div>
+                      </TD>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Footer actions */}
+      {/* Footer */}
       <div className="flex justify-end gap-3 mt-4">
+        <button
+          onClick={onHistory}
+          className="flex items-center gap-2 px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          <History size={15} />
+          Lịch sử
+        </button>
         <button
           onClick={onClear}
           className="px-5 py-2 text-sm font-medium text-gray-800 bg-[#F0B429] rounded-lg hover:bg-[#e0a820] transition-colors"

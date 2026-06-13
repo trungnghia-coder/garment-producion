@@ -9,7 +9,10 @@ import { StageWithPrice, OrderItem } from "@/types/stage";
 import { useStages } from "@/hooks/useStage";
 import { getGarmentTypes, GarmentType } from "@/lib/firebase/garment-types";
 import PriceSummary from "@/components/orders/PriceSummary";
+import OrderHistoryDrawer from "@/components/orders/OrderHistoryDrawer";
 import { printPDF } from "@/lib/print-pdf";
+import { saveOrder } from "@/lib/firebase/order";
+import { Order } from "@/lib/firebase/order";
 
 export default function StagesByMaterialPage() {
   const { materialId } = useParams<{ materialId: string }>();
@@ -21,8 +24,8 @@ export default function StagesByMaterialPage() {
   const [syncQty, setSyncQty] = useState(0);
   const [productCode, setProductCode] = useState("");
   const [garmentTypes, setGarmentTypes] = useState<GarmentType[]>([]);
+  const [historyOpen, setHistoryOpen] = useState(false);
   
-
   const handleToggle = useCallback((stage: StageWithPrice) => {
     const isSelected = selectedIds.has(stage.id);
     if (isSelected) {
@@ -67,23 +70,60 @@ export default function StagesByMaterialPage() {
     }
   }, []);
 
-  const handleExport = useCallback(() => {
+  const handleExport = useCallback(async () => {
     if (orderItems.length === 0) {
       alert("Chưa có công đoạn nào trong bảng!");
       return;
     }
     printPDF(orderItems, garmentTypes, productCode, syncQty);
+
+    if (productCode && orderItems.length > 0) {
+      await saveOrder(productCode, orderItems, syncQty);
+    }
   }, [orderItems, garmentTypes, productCode, syncQty]);
 
   const handleAdd = useCallback(() => {
     alert("Mở modal thêm công đoạn mới!");
   }, []);
 
+  const handleLoadOrder = (order: Order) => {
+    setProductCode(order.productCode);
+    setSyncQty(order.syncQty);
+    setOrderItems(order.stages.map((s) => ({ ...s, qty: order.syncQty })));
+    setSelectedIds(new Set(order.stages.map((s) => s.id)));
+  };
+
+  const handleCloned = (newCode: string) => {
+    setProductCode(newCode);
+  };
+
   useEffect(() => {
     getGarmentTypes().then(setGarmentTypes);
   }, []);
 
+  useEffect(() => {
+  const pinnedIds: string[] = JSON.parse(localStorage.getItem("pinned_stage_ids") ?? "[]");
+  if (pinnedIds.length === 0 || stages.length === 0) return;
+
+    setOrderItems((prev) => {
+      const existingIds = new Set(prev.map((i) => i.id));
+      const toAdd = stages
+        .filter((s) => pinnedIds.includes(s.id) && !existingIds.has(s.id))
+        .map((s) => ({ ...s, qty: 0 })) as OrderItem[];
+      return [...prev, ...toAdd];
+    });
+  }, [stages]);
+
   if (loading) return <p className="p-5">Đang tải...</p>;
+
+  const handleRemove = (id: string) => {
+    setOrderItems((prev) => prev.filter((item) => item.id !== id));
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
@@ -110,9 +150,18 @@ export default function StagesByMaterialPage() {
           onClear={handleClear}
           onExport={handleExport}
           onQtyChange={handleQtyChange}
+          onRemove={handleRemove}
           onSyncQtyChange={handleSyncQtyChange}
           productCode={productCode}
           onProductCodeChange={setProductCode}
+          garmentTypes={garmentTypes}
+          onHistory={() => setHistoryOpen(true)}
+        />
+        <OrderHistoryDrawer
+          open={historyOpen}
+          onClose={() => setHistoryOpen(false)}
+          onLoad={handleLoadOrder}
+          onCloned={handleCloned}
         />
       </main>
       <div className="px-5 pb-5">
