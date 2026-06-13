@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import StageList from "@/components/stages/StageList";
 import OrderTable from "@/components/orders/OrderTable";
 import { StageWithPrice, OrderItem } from "@/types/stage";
 import { useStages } from "@/hooks/useStage";
+import { getGarmentTypes, GarmentType } from "@/lib/firebase/garment-types";
+import PriceSummary from "@/components/orders/PriceSummary";
+import { printPDF } from "@/lib/print-pdf";
 
 export default function StagesByMaterialPage() {
   const { materialId } = useParams<{ materialId: string }>();
@@ -16,6 +19,9 @@ export default function StagesByMaterialPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [syncQty, setSyncQty] = useState(0);
+  const [productCode, setProductCode] = useState("");
+  const [garmentTypes, setGarmentTypes] = useState<GarmentType[]>([]);
+  
 
   const handleToggle = useCallback((stage: StageWithPrice) => {
     const isSelected = selectedIds.has(stage.id);
@@ -35,6 +41,10 @@ export default function StagesByMaterialPage() {
     }
   }, [selectedIds]);
 
+  const handleSyncQtyChange = useCallback((qty: number) => {
+    setSyncQty(qty);
+  }, []);
+
   const handleQtyChange = useCallback((id: string, qty: number) => {
     setOrderItems((items) =>
       items.map((item) =>
@@ -46,22 +56,31 @@ export default function StagesByMaterialPage() {
   }, []);
 
   const handleSync = useCallback(() => {
-    const total = orderItems.reduce((sum, i) => sum + i.qty, 0);
-    setSyncQty(total);
-  }, [orderItems]);
+    setOrderItems((items) => items.map((item) => ({ ...item, qty: syncQty })));
+  }, [syncQty]);
 
   const handleClear = useCallback(() => {
-    setOrderItems([]);
-    setSelectedIds(new Set());
-    setSyncQty(0);
+    if (window.confirm("Bạn chắc chắn muốn xóa tất cả công đoạn đã thêm?")) {
+      setOrderItems([]);
+      setSelectedIds(new Set());
+      setSyncQty(0);
+    }
   }, []);
 
   const handleExport = useCallback(() => {
-    alert("Tính năng export Excel sẽ được tích hợp!");
-  }, []);
+    if (orderItems.length === 0) {
+      alert("Chưa có công đoạn nào trong bảng!");
+      return;
+    }
+    printPDF(orderItems, garmentTypes, productCode, syncQty);
+  }, [orderItems, garmentTypes, productCode, syncQty]);
 
   const handleAdd = useCallback(() => {
     alert("Mở modal thêm công đoạn mới!");
+  }, []);
+
+  useEffect(() => {
+    getGarmentTypes().then(setGarmentTypes);
   }, []);
 
   if (loading) return <p className="p-5">Đang tải...</p>;
@@ -91,8 +110,14 @@ export default function StagesByMaterialPage() {
           onClear={handleClear}
           onExport={handleExport}
           onQtyChange={handleQtyChange}
+          onSyncQtyChange={handleSyncQtyChange}
+          productCode={productCode}
+          onProductCodeChange={setProductCode}
         />
       </main>
+      <div className="px-5 pb-5">
+        <PriceSummary items={orderItems} garmentTypes={garmentTypes} />
+      </div>
     </div>
   );
 }
