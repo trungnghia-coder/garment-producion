@@ -85,6 +85,15 @@ export default function StagesByMaterialPage() {
 
   if (loading) return <p className="p-5">Đang tải...</p>;
 
+  const handleRemove = (id: string) => {
+    setOrderItems((prev) => prev.filter((item) => item.id !== id));
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <div className="px-5 pt-4">
@@ -110,9 +119,11 @@ export default function StagesByMaterialPage() {
           onClear={handleClear}
           onExport={handleExport}
           onQtyChange={handleQtyChange}
+          onRemove={handleRemove}
           onSyncQtyChange={handleSyncQtyChange}
           productCode={productCode}
           onProductCodeChange={setProductCode}
+          garmentTypes={garmentTypes}
         />
       </main>
       <div className="px-5 pb-5">
