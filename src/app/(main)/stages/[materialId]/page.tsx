@@ -9,8 +9,10 @@ import { StageWithPrice, OrderItem } from "@/types/stage";
 import { useStages } from "@/hooks/useStage";
 import { getGarmentTypes, GarmentType } from "@/lib/firebase/garment-types";
 import PriceSummary from "@/components/orders/PriceSummary";
+import OrderHistoryDrawer from "@/components/orders/OrderHistoryDrawer";
 import { printPDF } from "@/lib/print-pdf";
 import { saveOrder } from "@/lib/firebase/order";
+import { Order } from "@/lib/firebase/order";
 
 export default function StagesByMaterialPage() {
   const { materialId } = useParams<{ materialId: string }>();
@@ -22,8 +24,8 @@ export default function StagesByMaterialPage() {
   const [syncQty, setSyncQty] = useState(0);
   const [productCode, setProductCode] = useState("");
   const [garmentTypes, setGarmentTypes] = useState<GarmentType[]>([]);
+  const [historyOpen, setHistoryOpen] = useState(false);
   
-
   const handleToggle = useCallback((stage: StageWithPrice) => {
     const isSelected = selectedIds.has(stage.id);
     if (isSelected) {
@@ -84,6 +86,17 @@ export default function StagesByMaterialPage() {
     alert("Mở modal thêm công đoạn mới!");
   }, []);
 
+  const handleLoadOrder = (order: Order) => {
+    setProductCode(order.productCode);
+    setSyncQty(order.syncQty);
+    setOrderItems(order.stages.map((s) => ({ ...s, qty: order.syncQty })));
+    setSelectedIds(new Set(order.stages.map((s) => s.id)));
+  };
+
+  const handleCloned = (newCode: string) => {
+    setProductCode(newCode);
+  };
+
   useEffect(() => {
     getGarmentTypes().then(setGarmentTypes);
   }, []);
@@ -142,6 +155,13 @@ export default function StagesByMaterialPage() {
           productCode={productCode}
           onProductCodeChange={setProductCode}
           garmentTypes={garmentTypes}
+          onHistory={() => setHistoryOpen(true)}
+        />
+        <OrderHistoryDrawer
+          open={historyOpen}
+          onClose={() => setHistoryOpen(false)}
+          onLoad={handleLoadOrder}
+          onCloned={handleCloned}
         />
       </main>
       <div className="px-5 pb-5">
