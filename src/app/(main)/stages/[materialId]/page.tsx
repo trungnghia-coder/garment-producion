@@ -83,6 +83,19 @@ export default function StagesByMaterialPage() {
     getGarmentTypes().then(setGarmentTypes);
   }, []);
 
+  useEffect(() => {
+  const pinnedIds: string[] = JSON.parse(localStorage.getItem("pinned_stage_ids") ?? "[]");
+  if (pinnedIds.length === 0 || stages.length === 0) return;
+
+    setOrderItems((prev) => {
+      const existingIds = new Set(prev.map((i) => i.id));
+      const toAdd = stages
+        .filter((s) => pinnedIds.includes(s.id) && !existingIds.has(s.id))
+        .map((s) => ({ ...s, qty: 0 })) as OrderItem[];
+      return [...prev, ...toAdd];
+    });
+  }, [stages]);
+
   if (loading) return <p className="p-5">Đang tải...</p>;
 
   const handleRemove = (id: string) => {
