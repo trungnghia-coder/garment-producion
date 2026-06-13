@@ -134,7 +134,7 @@ export default function OrderTable({
         </button>
         <button
           onClick={onExport}
-          className="px-5 py-2 text-sm font-medium text-white bg-[#1D6B3B] rounded-lg hover:bg-[#185e33] transition-colors"
+          className="px-5 py-2 text-sm font-medium text-white bg-[#FF0000] rounded-lg hover:bg-[#FF0000] transition-colors"
         >
           In PDF
         </button>
