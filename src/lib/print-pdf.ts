@@ -15,6 +15,7 @@ export function printPDF(
   garmentTypes: GarmentType[],
   productCode: string,
   syncQty: number,
+  priceType: "company" | "market",
 ) {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
@@ -42,7 +43,11 @@ export function printPDF(
   doc.text(`Số lượng: ${syncQty} bộ`, 14, 41);
 
   // ── Tính tổng ────────────────────────────────────────
-  const grandTotalCompany = items.reduce((sum, i) => sum + i.price_company, 0);
+  const grandTotal = items.reduce(
+    (sum, i) =>
+      sum + (priceType === "company" ? i.price_company : i.price_market),
+    0,
+  );
 
   const firstType = garmentTypes.find((t) =>
     items.some((i) => i.type_id === t.id),
@@ -50,7 +55,11 @@ export function printPDF(
   const firstTypeTotal = firstType
     ? items
         .filter((i) => i.type_id === firstType.id)
-        .reduce((sum, i) => sum + i.price_company, 0)
+        .reduce(
+          (sum, i) =>
+            sum + (priceType === "company" ? i.price_company : i.price_market),
+          0,
+        )
     : 0;
 
   const GRAY: [number, number, number] = [180, 180, 180];
@@ -64,7 +73,11 @@ export function printPDF(
     const typeItems = items.filter((i) => i.type_id === type.id);
     if (typeItems.length === 0) return;
 
-    const totalCompany = typeItems.reduce((sum, i) => sum + i.price_company, 0);
+    const totalGroup = typeItems.reduce(
+      (sum, i) =>
+        sum + (priceType === "company" ? i.price_company : i.price_market),
+      0,
+    );
 
     if (!isFirst) {
       allRows.push([
@@ -75,7 +88,7 @@ export function printPDF(
           styles: { fillColor: GRAY, fontStyle: "bold", halign: "center" },
         },
         {
-          content: totalCompany.toLocaleString("vi-VN"),
+          content: totalGroup.toLocaleString("vi-VN"),
           colSpan: 4,
           styles: { halign: "right", fillColor: GRAY, fontStyle: "bold" },
         },
@@ -94,7 +107,10 @@ export function printPDF(
         { content: "" },
         { content: "" },
         {
-          content: item.price_company.toLocaleString("vi-VN"),
+          content: (priceType === "company"
+            ? item.price_company
+            : item.price_market
+          ).toLocaleString("vi-VN"),
           styles: { halign: "right" },
         },
       ]);
@@ -174,7 +190,7 @@ export function printPDF(
       // Dòng 2: tổng đơn ở cột Giá thành
       [
         {
-          content: grandTotalCompany.toLocaleString("vi-VN"),
+          content: grandTotal.toLocaleString("vi-VN"),
           styles: {
             halign: "right",
             fontStyle: "bold",
