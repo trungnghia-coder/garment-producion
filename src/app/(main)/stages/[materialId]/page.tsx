@@ -5,14 +5,14 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import StageList from "@/components/stages/StageList";
 import OrderTable from "@/components/orders/OrderTable";
+import PrintDialog from "@/components/orders/PrintDialog";
 import { StageWithPrice, OrderItem } from "@/types/stage";
 import { useStages } from "@/hooks/useStage";
 import { getGarmentTypes, GarmentType } from "@/lib/firebase/garment-types";
 import PriceSummary from "@/components/orders/PriceSummary";
 import OrderHistoryDrawer from "@/components/orders/OrderHistoryDrawer";
 import { printPDF } from "@/lib/print-pdf";
-import { saveOrder } from "@/lib/firebase/order";
-import { Order } from "@/lib/firebase/order";
+import { saveOrder, Order } from "@/lib/firebase/order";
 
 export default function StagesByMaterialPage() {
   const { materialId } = useParams<{ materialId: string }>();
@@ -25,6 +25,7 @@ export default function StagesByMaterialPage() {
   const [productCode, setProductCode] = useState("");
   const [garmentTypes, setGarmentTypes] = useState<GarmentType[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [printDialogOpen, setPrintDialogOpen] = useState(false);
   
   const handleToggle = useCallback((stage: StageWithPrice) => {
     const isSelected = selectedIds.has(stage.id);
@@ -75,11 +76,16 @@ export default function StagesByMaterialPage() {
       alert("Chưa có công đoạn nào trong bảng!");
       return;
     }
-    printPDF(orderItems, garmentTypes, productCode, syncQty);
+    setPrintDialogOpen(true);
 
     if (productCode && orderItems.length > 0) {
       await saveOrder(productCode, orderItems, syncQty);
     }
+  }, [orderItems, productCode, syncQty]);
+
+  const handlePrintConfirm = useCallback((priceType: "company" | "market") => {
+    setPrintDialogOpen(false);
+    printPDF(orderItems, garmentTypes, productCode, syncQty, priceType);
   }, [orderItems, garmentTypes, productCode, syncQty]);
 
   const handleAdd = useCallback(() => {
@@ -162,6 +168,11 @@ export default function StagesByMaterialPage() {
           onClose={() => setHistoryOpen(false)}
           onLoad={handleLoadOrder}
           onCloned={handleCloned}
+        />
+        <PrintDialog
+          open={printDialogOpen}
+          onClose={() => setPrintDialogOpen(false)}
+          onConfirm={handlePrintConfirm}
         />
       </main>
       <div className="px-5 pb-5">
