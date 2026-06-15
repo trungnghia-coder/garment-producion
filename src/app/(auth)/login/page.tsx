@@ -86,9 +86,7 @@ export default function LoginPage() {
           {/* Bottom text */}
           <div>
             <h2 className="text-white text-3xl font-bold leading-snug">
-              Quản lý công đoạn
-              <br />
-              sản xuất chuyên nghiệp
+              Quản lý nội bộ <br /> NITIMO Fashion
             </h2>
             <p className="text-white/60 text-sm mt-3">
               Hệ thống quản lý nội bộ — NITIMO Fashion
