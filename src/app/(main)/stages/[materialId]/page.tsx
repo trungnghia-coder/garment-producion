@@ -103,6 +103,10 @@ export default function StagesByMaterialPage() {
     setProductCode(newCode);
   };
 
+  const handleReorder = useCallback((newItems: OrderItem[]) => {
+    setOrderItems(newItems);
+  }, []);
+
   useEffect(() => {
     getGarmentTypes().then(setGarmentTypes);
   }, []);
@@ -162,6 +166,7 @@ export default function StagesByMaterialPage() {
           onProductCodeChange={setProductCode}
           garmentTypes={garmentTypes}
           onHistory={() => setHistoryOpen(true)}
+          onReorder={handleReorder}
         />
         <OrderHistoryDrawer
           open={historyOpen}
