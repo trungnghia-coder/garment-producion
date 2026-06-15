@@ -6,6 +6,16 @@ const nextConfig: NextConfig = {
     "firebase-admin/app",
     "firebase-admin/auth",
   ],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
