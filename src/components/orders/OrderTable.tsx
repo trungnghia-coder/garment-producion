@@ -2,7 +2,7 @@
 
 import { OrderItem } from "@/types/stage";
 import { GarmentType } from "@/lib/firebase/garment-types";
-import { Pin, Trash2, History, GripVertical } from "lucide-react";
+import { Pin, Trash2, History, GripVertical, Eye } from "lucide-react";
 import { useState } from "react";
 import {
   DndContext,
@@ -36,6 +36,7 @@ interface OrderTableProps {
   productCode: string;
   onProductCodeChange: (code: string) => void;
   garmentTypes: GarmentType[];
+  onViewDetail: (item: OrderItem) => void;
 }
 
 const PINNED_KEY = "pinned_stage_ids";
@@ -64,6 +65,7 @@ function SortableRow({
   onRemove,
   onTogglePin,
   isActive,
+  onViewDetail,
 }: {
   item: OrderItem;
   idx: number;
@@ -72,6 +74,7 @@ function SortableRow({
   onQtyChange: (id: string, qty: number) => void;
   onRemove: (id: string) => void;
   onTogglePin: (item: OrderItem) => void;
+  onViewDetail: (item: OrderItem) => void;
   isActive: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
@@ -136,6 +139,13 @@ function SortableRow({
           >
             <Trash2 className="w-6 h-6" />
           </button>
+          <button
+            onClick={() => onViewDetail(item)}
+            title="Xem chi tiết"
+            className="text-gray-300 hover:text-blue-500 transition-colors"
+          >
+            <Eye className="w-6 h-6" />
+          </button>
         </div>
       </TD>
     </tr>
@@ -156,6 +166,7 @@ export default function OrderTable({
   productCode,
   onProductCodeChange,
   garmentTypes = [],
+  onViewDetail,
 }: OrderTableProps) {
   const [pinnedIds, setPinnedIds] = useState<string[]>(() => getPinnedIds());
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -264,6 +275,7 @@ export default function OrderTable({
                       onRemove={onRemove}
                       onTogglePin={togglePin}
                       isActive={item.id === activeId}
+                      onViewDetail={onViewDetail}
                     />
                   ))
                 )}

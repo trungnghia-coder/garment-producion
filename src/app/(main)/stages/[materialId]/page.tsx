@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import StageList from "@/components/stages/StageList";
 import OrderTable from "@/components/orders/OrderTable";
 import PrintDialog from "@/components/orders/PrintDialog";
+import StageDrawer from "@/components/stages/StageDrawer";
 import { StageWithPrice, OrderItem } from "@/types/stage";
 import { useStages } from "@/hooks/useStage";
 import { getGarmentTypes, GarmentType } from "@/lib/firebase/garment-types";
@@ -26,6 +27,11 @@ export default function StagesByMaterialPage() {
   const [garmentTypes, setGarmentTypes] = useState<GarmentType[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [printDialogOpen, setPrintDialogOpen] = useState(false);
+  const [stageDrawer, setStageDrawer] = useState<{
+    open: boolean;
+    mode: "add" | "edit";
+    stage?: StageWithPrice | null;
+  }>({ open: false, mode: "add" });
   
   const handleToggle = useCallback((stage: StageWithPrice) => {
     const isSelected = selectedIds.has(stage.id);
@@ -88,10 +94,6 @@ export default function StagesByMaterialPage() {
     printPDF(orderItems, garmentTypes, productCode, syncQty, priceType);
   }, [orderItems, garmentTypes, productCode, syncQty]);
 
-  const handleAdd = useCallback(() => {
-    alert("Mở modal thêm công đoạn mới!");
-  }, []);
-
   const handleLoadOrder = (order: Order) => {
     setProductCode(order.productCode);
     setSyncQty(order.syncQty);
@@ -106,6 +108,10 @@ export default function StagesByMaterialPage() {
   const handleReorder = useCallback((newItems: OrderItem[]) => {
     setOrderItems(newItems);
   }, []);
+
+  const handleAdd = () => setStageDrawer({ open: true, mode: "add" });
+ 
+  const handleViewDetail = (stage: StageWithPrice) => setStageDrawer({ open: true, mode: "edit", stage });
 
   useEffect(() => {
     getGarmentTypes().then(setGarmentTypes);
@@ -167,6 +173,7 @@ export default function StagesByMaterialPage() {
           garmentTypes={garmentTypes}
           onHistory={() => setHistoryOpen(true)}
           onReorder={handleReorder}
+          onViewDetail={handleViewDetail}
         />
         <OrderHistoryDrawer
           open={historyOpen}
@@ -178,6 +185,15 @@ export default function StagesByMaterialPage() {
           open={printDialogOpen}
           onClose={() => setPrintDialogOpen(false)}
           onConfirm={handlePrintConfirm}
+        />
+        <StageDrawer
+          open={stageDrawer.open}
+          mode={stageDrawer.mode}
+          stage={stageDrawer.stage}
+          onClose={() => setStageDrawer((prev) => ({ ...prev, open: false }))}
+          garmentTypes={garmentTypes}
+          defaultMaterialId={materialId}
+          onSaved={() => {/* reload stages nếu cần */}}
         />
       </main>
       <div className="px-5 pb-5">
