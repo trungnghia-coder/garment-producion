@@ -7,6 +7,7 @@ import {
   query,
   orderBy,
   Timestamp,
+  where,
 } from "firebase/firestore";
 import { db } from "./config";
 import { StageWithPrice } from "@/types/stage";
@@ -15,6 +16,7 @@ export interface Order {
   productCode: string;
   stages: StageWithPrice[];
   syncQty: number;
+  materialId: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -23,6 +25,7 @@ export async function saveOrder(
   productCode: string,
   stages: StageWithPrice[],
   syncQty: number,
+  materialId: string,
 ): Promise<void> {
   const ref = doc(db, "orders", productCode);
   const existing = await getDoc(ref);
@@ -31,13 +34,18 @@ export async function saveOrder(
     productCode,
     stages,
     syncQty,
+    materialId,
     createdAt: existing.exists() ? existing.data().createdAt : Timestamp.now(),
     updatedAt: Timestamp.now(),
   });
 }
 
-export async function getOrders(): Promise<Order[]> {
-  const q = query(collection(db, "orders"), orderBy("updatedAt", "desc"));
+export async function getOrders(materialId: string): Promise<Order[]> {
+  const q = query(
+    collection(db, "orders"),
+    where("materialId", "==", materialId),
+    orderBy("updatedAt", "desc"),
+  );
   const snapshot = await getDocs(q);
   return snapshot.docs.map((doc) => doc.data() as Order);
 }

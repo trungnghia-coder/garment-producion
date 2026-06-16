@@ -30,7 +30,7 @@ export default function DashboardPage() {
           return (
             <div key={mod.href} className="flex flex-col items-center gap-2">
               {mod.ready ? (
-                <Link href={mod.href}>{iconBox}</Link>
+                <Link href={mod.href} target="_blank" rel="noopener noreferrer">{iconBox}</Link>
               ) : (
                 <div onClick={() => toast("Tính năng đang phát triển", {  icon: <Construction size={16} color="#F0B429" /> })} className="cursor-not-allowed">
                   {iconBox}

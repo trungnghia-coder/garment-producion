@@ -1,6 +1,6 @@
 "use client";
 
-import { Stage, StageWithPrice } from "@/types/stage";
+import { StageWithPrice } from "@/types/stage";
 
 interface StageItemProps {
   stage: StageWithPrice;

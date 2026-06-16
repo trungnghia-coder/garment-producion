@@ -86,9 +86,7 @@ export default function LoginPage() {
           {/* Bottom text */}
           <div>
             <h2 className="text-white text-3xl font-bold leading-snug">
-              Quản lý công đoạn
-              <br />
-              sản xuất chuyên nghiệp
+              Quản lý nội bộ <br /> NITIMO Fashion
             </h2>
             <p className="text-white/60 text-sm mt-3">
               Hệ thống quản lý nội bộ — NITIMO Fashion
@@ -97,7 +95,7 @@ export default function LoginPage() {
         </div>
 
         <Image
-          src="/hero-banner.png"
+          src="https://res.cloudinary.com/dhdh6g0yg/image/upload/v1781013887/Thi%E1%BA%BFt_k%E1%BA%BF_ch%C6%B0a_c%C3%B3_t%C3%AAn_1_yxclpo.jpg"
           alt="NITIMO Fashion"
           fill
           className="object-cover"
@@ -112,7 +110,7 @@ export default function LoginPage() {
           {/* Mobile logo */}
           <div className="flex justify-center mb-8 lg:hidden">
             <Image
-              src="/logo-color.png"
+              src="https://res.cloudinary.com/dhdh6g0yg/image/upload/v1781531368/Th%C3%AAm_ti%C3%AAu_%C4%91%E1%BB%81_1_1_sjvswv.png"
               alt="NITIMO"
               width={120}
               height={40}
