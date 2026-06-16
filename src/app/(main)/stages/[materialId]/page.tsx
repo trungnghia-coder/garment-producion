@@ -18,7 +18,7 @@ import { saveOrder, Order } from "@/lib/firebase/order";
 export default function StagesByMaterialPage() {
   const { materialId } = useParams<{ materialId: string }>();
   const router = useRouter();
-  const { stages, loading, refresh  } = useStages(materialId);
+  const { stages, loading, refresh} = useStages(materialId);
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
@@ -113,6 +113,20 @@ export default function StagesByMaterialPage() {
  
   const handleViewDetail = (stage: StageWithPrice) => setStageDrawer({ open: true, mode: "edit", stage });
 
+  const handleSaved = useCallback(async () => {
+    const updatedStages = await refresh() as StageWithPrice[];
+    const stageMap = new Map(updatedStages.map((s) => [s.id, s]));
+
+    setOrderItems((prev) =>
+      prev.map((item) => {
+        const fresh = stageMap.get(item.id);
+        return fresh
+          ? { ...item, name: fresh.name, price_company: fresh.price_company, price_market: fresh.price_market, type_id: fresh.type_id }
+          : item;
+      }),
+    );
+  }, [refresh]);
+
   useEffect(() => {
     getGarmentTypes().then(setGarmentTypes);
   }, []);
@@ -193,7 +207,7 @@ export default function StagesByMaterialPage() {
           onClose={() => setStageDrawer((prev) => ({ ...prev, open: false }))}
           garmentTypes={garmentTypes}
           defaultMaterialId={materialId}
-          onSaved={refresh}
+          onSaved={handleSaved}
         />
       </main>
       <div className="px-5 pb-5">
