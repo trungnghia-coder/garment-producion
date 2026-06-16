@@ -10,6 +10,7 @@ import { Material } from "@/types/material";
 import { StageWithPrice } from "@/types/stage";
 import { StagePrice } from "@/types/stage-price";
 import SimilarNamesDialog from "./SimilarNamesDialog";
+import { toast } from "react-hot-toast";
 
 type Mode = "add" | "edit";
 
@@ -148,7 +149,13 @@ export default function StageDrawer({
     if (!isValid || saving) return;
 
     if (mode === "add") {
-      const similar = await stageRepo.findSimilarNames(name.trim());
+      const { exact, similar } = await stageRepo.findSimilarNames(name.trim(), materialId);
+
+      if (exact) {
+        toast.error("Công đoạn này đã tồn tại trong chất liệu đang chọn!");
+        return;
+      }
+
       if (similar.length > 0) {
         setSimilarNames(similar);
         setConfirmOpen(true);

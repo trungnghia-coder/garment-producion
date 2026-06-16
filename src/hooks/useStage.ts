@@ -8,8 +8,13 @@ export function useStages(materialId?: string) {
 
   const fetchStages = useCallback(() => {
     setLoading(true);
-    const fetch = materialId ? getStagesByMaterial(materialId) : getStages();
-    fetch.then(setStages).finally(() => setLoading(false));
+    const fetcher = materialId ? getStagesByMaterial(materialId) : getStages();
+    return fetcher
+      .then((data) => {
+        setStages(data);
+        return data;
+      })
+      .finally(() => setLoading(false));
   }, [materialId]);
 
   useEffect(() => {

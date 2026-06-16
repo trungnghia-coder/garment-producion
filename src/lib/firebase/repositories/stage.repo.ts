@@ -94,23 +94,50 @@ export const stageRepo = {
   },
 
   // CHECK SIMILAR NAME
-  async findSimilarNames(name: string): Promise<string[]> {
-    const snap = await getDocs(
-      query(collection(db, COL), where("isActive", "==", true)),
+  async findSimilarNames(
+    name: string,
+    materialId: string,
+  ): Promise<{ exact: boolean; similar: string[] }> {
+    const [pricesSnap, stagesSnap] = await Promise.all([
+      getDocs(
+        query(
+          collection(db, "stage_prices"),
+          where("material_id", "==", materialId),
+          where("isActive", "==", true),
+        ),
+      ),
+      getDocs(query(collection(db, COL), where("isActive", "==", true))),
+    ]);
+
+    if (pricesSnap.empty) return { exact: false, similar: [] };
+
+    const stageIdsInMaterial = new Set(
+      pricesSnap.docs.map((d) => d.data().stage_id as string),
     );
     const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, "");
     const inputNorm = normalize(name);
-    return snap.docs
-      .map((d) => d.data().name as string)
-      .filter((n) => {
-        const nNorm = normalize(n);
-        return (
-          nNorm !== inputNorm &&
-          (nNorm.includes(inputNorm) ||
+
+    const namesInMaterial = stagesSnap.docs
+      .filter((d) => stageIdsInMaterial.has(d.id))
+      .map((d) => d.data().name as string);
+
+    const exact = namesInMaterial.some((n) => normalize(n) === inputNorm);
+    if (exact) return { exact: true, similar: [] };
+
+    const similar = [
+      ...new Set(
+        namesInMaterial.filter((n) => {
+          const nNorm = normalize(n);
+          return (
+            nNorm.includes(inputNorm) ||
             inputNorm.includes(nNorm) ||
-            levenshtein(inputNorm, nNorm) <= 3)
-        );
-      });
+            levenshtein(inputNorm, nNorm) <= 3
+          );
+        }),
+      ),
+    ];
+
+    return { exact: false, similar };
   },
 };
 
