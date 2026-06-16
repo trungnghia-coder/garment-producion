@@ -126,6 +126,13 @@ function SortableRow({
       <TD className="text-center">
         <div className="flex items-center justify-center gap-2">
           <button
+            onClick={() => onViewDetail(item)}
+            title="Xem chi tiết"
+            className="text-gray-300 hover:text-blue-500 transition-colors"
+          >
+            <Eye className="w-6 h-6" />
+          </button>
+          <button
             onClick={() => onTogglePin(item)}
             title={isPinned ? "Bỏ ghim" : "Ghim công đoạn này"}
             className={`transition-all hover:scale-110 ${isPinned ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
@@ -138,13 +145,6 @@ function SortableRow({
             className="text-gray-300 hover:text-red-500 transition-colors"
           >
             <Trash2 className="w-6 h-6" />
-          </button>
-          <button
-            onClick={() => onViewDetail(item)}
-            title="Xem chi tiết"
-            className="text-gray-300 hover:text-blue-500 transition-colors"
-          >
-            <Eye className="w-6 h-6" />
           </button>
         </div>
       </TD>
