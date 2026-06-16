@@ -18,7 +18,7 @@ import { saveOrder, Order } from "@/lib/firebase/order";
 export default function StagesByMaterialPage() {
   const { materialId } = useParams<{ materialId: string }>();
   const router = useRouter();
-  const { stages, loading } = useStages(materialId);
+  const { stages, loading, refresh  } = useStages(materialId);
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
@@ -193,7 +193,7 @@ export default function StagesByMaterialPage() {
           onClose={() => setStageDrawer((prev) => ({ ...prev, open: false }))}
           garmentTypes={garmentTypes}
           defaultMaterialId={materialId}
-          onSaved={() => {/* reload stages nếu cần */}}
+          onSaved={refresh}
         />
       </main>
       <div className="px-5 pb-5">
