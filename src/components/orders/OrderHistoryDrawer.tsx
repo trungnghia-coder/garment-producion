@@ -9,6 +9,7 @@ interface OrderHistoryDrawerProps {
   onClose: () => void;
   onLoad: (order: Order) => void;
   onCloned: (newCode: string) => void;
+  materialId: string;
 }
 
 function timeAgo(ts: { seconds: number }): string {
@@ -24,6 +25,7 @@ export default function OrderHistoryDrawer({
   onClose,
   onLoad,
   onCloned,
+  materialId
 }: OrderHistoryDrawerProps) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
@@ -31,11 +33,10 @@ export default function OrderHistoryDrawer({
 
   useEffect(() => {
     if (!open) return;
-    setLoading(true);
-    getOrders()
+    getOrders(materialId)
       .then(setOrders)
       .finally(() => setLoading(false));
-  }, [open]);
+  }, [open, materialId]);
 
   const handleClone = async (productCode: string) => {
     setCloningId(productCode);
@@ -43,7 +44,7 @@ export default function OrderHistoryDrawer({
     setCloningId(null);
     if (newCode) {
       // Refresh danh sách
-      const updated = await getOrders();
+      const updated = await getOrders(materialId);
       setOrders(updated);
       onCloned(newCode);
     } else {

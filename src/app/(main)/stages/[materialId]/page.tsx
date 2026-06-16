@@ -82,12 +82,13 @@ export default function StagesByMaterialPage() {
       alert("Chưa có công đoạn nào trong bảng!");
       return;
     }
+
     setPrintDialogOpen(true);
 
     if (productCode && orderItems.length > 0) {
-      await saveOrder(productCode, orderItems, syncQty);
+      await saveOrder(productCode, orderItems, syncQty, materialId);
     }
-  }, [orderItems, productCode, syncQty]);
+  }, [orderItems, productCode, syncQty, materialId]);
 
   const handlePrintConfirm = useCallback((priceType: "company" | "market") => {
     setPrintDialogOpen(false);
@@ -194,6 +195,7 @@ export default function StagesByMaterialPage() {
           onClose={() => setHistoryOpen(false)}
           onLoad={handleLoadOrder}
           onCloned={handleCloned}
+          materialId={materialId}
         />
         <PrintDialog
           open={printDialogOpen}
