@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Scissors, CreditCard, BarChart2, Users, Settings, Construction } from "lucide-react";
+import { Scissors, CreditCard, BarChart2, Users, Settings, Construction, Settings2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 const modules = [
-  { title: "Quản lý\ncông đoạn", icon: Scissors, href: "/stages", color: "#8B1A1A", ready: true },
+  { title: "Quy trình\nsản xuất", icon: Scissors, href: "/stages", color: "#8B1A1A", ready: true },
+  { title: "Quản lý\ncông đoạn", icon: Settings2, href: "/stages/manage", color: "#B45309", ready: true },
   { title: "Quản lý\nlương", icon: CreditCard, href: "/salary", color: "#1A4A8B", ready: false },
   { title: "Báo cáo", icon: BarChart2, href: "/reports", color: "#1D6B3B", ready: false },
   { title: "Nhân viên", icon: Users, href: "/employees", color: "#7B3F9E", ready: false },
