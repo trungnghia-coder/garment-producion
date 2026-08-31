@@ -93,31 +93,12 @@ export default function LoginPage() {
             </p>
           </div>
         </div>
-
-        <Image
-          src="https://res.cloudinary.com/dhdh6g0yg/image/upload/v1781013887/Thi%E1%BA%BFt_k%E1%BA%BF_ch%C6%B0a_c%C3%B3_t%C3%AAn_1_yxclpo.jpg"
-          alt="NITIMO Fashion"
-          fill
-          className="object-cover"
-          priority
-        />
        
       </div>
 
       {/* Right — login form */}
       <div className="flex-1 flex flex-col items-center justify-center px-8 bg-white">
         <div className="w-full max-w-lg">
-          {/* Mobile logo */}
-          <div className="flex justify-center mb-8 lg:hidden">
-            <Image
-              src="https://res.cloudinary.com/dhdh6g0yg/image/upload/v1781531368/Th%C3%AAm_ti%C3%AAu_%C4%91%E1%BB%81_1_1_sjvswv.png"
-              alt="NITIMO"
-              width={120}
-              height={40}
-              className="object-contain"
-              priority
-            />
-          </div>
 
           <h1 className="text-3xl text-center font-bold text-gray-900 mb-1">
             Đăng nhập
