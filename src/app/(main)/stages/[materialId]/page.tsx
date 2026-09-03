@@ -173,6 +173,7 @@ export default function StagesByMaterialPage() {
           selectedIds={selectedIds}
           onToggle={handleToggle}
           onAdd={handleAdd}
+          garmentTypes={garmentTypes} 
         />
         <OrderTable
           items={orderItems}
