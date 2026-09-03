@@ -101,9 +101,6 @@ export default function StageDrawer({
     }
   };
 
-  const getMaterialName = (mid: string) =>
-    materials.find((m) => m.id === mid)?.name ?? mid;
-
   const isValid =
     name.trim().length > 0 &&
     typeId &&
@@ -149,7 +146,7 @@ export default function StageDrawer({
     if (!isValid || saving) return;
 
     if (mode === "add") {
-      const { exact, similar } = await stageRepo.findSimilarNames(name.trim(), materialId);
+      const { exact, similar } = await stageRepo.findSimilarNames(name.trim(), materialId, typeId);
 
       if (exact) {
         toast.error("Công đoạn này đã tồn tại trong chất liệu đang chọn!");
@@ -230,35 +227,36 @@ export default function StageDrawer({
           {/* Add: chọn material tự do — Edit: chọn để xem/sửa giá tương ứng */}
           <div>
             <label className={labelClass}>Chất liệu</label>
-            {isEdit && loadingPrices ? (
-              <p className="text-sm text-gray-400">Đang tải...</p>
-            ) : isEdit && stagePrices.length === 0 ? (
-              <p className="text-sm text-gray-400">Chưa có giá nào</p>
-            ) : isEdit ? (
-              <select
-                value={selectedPriceId ?? ""}
-                onChange={(e) => handlePriceSelect(e.target.value)}
-                className={inputClass}
-              >
-                {stagePrices.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {getMaterialName(p.material_id)}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <select
-                value={materialId}
-                onChange={(e) => setMaterialId(e.target.value)}
-                className={inputClass}
-              >
-                {materials.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.name}
-                  </option>
-                ))}
-              </select>
-            )}
+            {isEdit ? (
+  loadingPrices ? (
+    <p className="text-sm text-gray-400">Đang tải...</p>
+  ) : (
+    <select
+      value={selectedPriceId ?? ""}
+      onChange={(e) => handlePriceSelect(e.target.value)}
+      className={inputClass}
+    >
+      {materials.map((m) => {
+        const price = stagePrices.find((p) => p.material_id === m.id);
+        return (
+          <option key={m.id} value={price?.id ?? `new_${m.id}`}>
+            {m.name}{!price ? " (chưa có giá)" : ""}
+          </option>
+        );
+      })}
+    </select>
+  )
+) : (
+  <select
+    value={materialId}
+    onChange={(e) => setMaterialId(e.target.value)}
+    className={inputClass}
+  >
+    {materials.map((m) => (
+      <option key={m.id} value={m.id}>{m.name}</option>
+    ))}
+  </select>
+)}
           </div>
 
           <div className="grid grid-cols-2 gap-3">

@@ -1,14 +1,18 @@
 "use client";
 
 import { StageWithPrice } from "@/types/stage";
+import { GarmentType } from "@/lib/firebase/garment-types";
 
 interface StageItemProps {
   stage: StageWithPrice;
   isSelected: boolean;
   onToggle: (stage: StageWithPrice) => void;
+  garmentTypes: GarmentType[];
 }
 
-export default function StageItem({ stage, isSelected, onToggle }: StageItemProps) {
+export default function StageItem({ stage, isSelected, onToggle, garmentTypes}: StageItemProps) {
+  const typeName = garmentTypes.find((t) => t.id === stage.type_id)?.name ?? stage.type_id;
+
   return (
     <button
       onClick={() => onToggle(stage)}
@@ -17,7 +21,7 @@ export default function StageItem({ stage, isSelected, onToggle }: StageItemProp
       <div className="min-w-0">
         <p className="text-sm font-medium text-gray-800 truncate">{stage.name}</p>
         <p className="text-xs text-gray-400 mt-0.5">
-          {stage.price_company.toLocaleString("vi-VN")} / {stage.price_market.toLocaleString("vi-VN")}
+          {stage.price_company.toLocaleString("vi-VN")} / {stage.price_market.toLocaleString("vi-VN")} - {typeName}
         </p>
       </div>
       <div

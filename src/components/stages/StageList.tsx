@@ -3,12 +3,14 @@
 import { useState } from "react";
 import StageItem from "./StageItem";
 import { StageWithPrice } from "@/types/stage";
+import { GarmentType } from "@/lib/firebase/garment-types";
 
 interface StageListProps {
   stages: StageWithPrice [];
   selectedIds: Set<string>;
   onToggle: (stage: StageWithPrice) => void;
   onAdd: () => void;
+  garmentTypes: GarmentType[];
 }
 
 export default function StageList({
@@ -16,6 +18,7 @@ export default function StageList({
   selectedIds,
   onToggle,
   onAdd,
+  garmentTypes
 }: StageListProps) {
   const [search, setSearch] = useState("");
 
@@ -55,6 +58,7 @@ export default function StageList({
               stage={stage}
               isSelected={selectedIds.has(stage.id)}
               onToggle={onToggle}
+              garmentTypes={garmentTypes} 
             />
           ))
         )}

@@ -97,12 +97,14 @@ export const stageRepo = {
   async findSimilarNames(
     name: string,
     materialId: string,
+    typeId: string,
   ): Promise<{ exact: boolean; similar: string[] }> {
     const [pricesSnap, stagesSnap] = await Promise.all([
       getDocs(
         query(
           collection(db, "stage_prices"),
           where("material_id", "==", materialId),
+          where("type_id", "==", typeId),
           where("isActive", "==", true),
         ),
       ),
