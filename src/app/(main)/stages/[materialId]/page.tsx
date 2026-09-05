@@ -5,13 +5,13 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import StageList from "@/components/stages/StageList";
 import OrderTable from "@/components/orders/OrderTable";
-import PrintDialog from "@/components/orders/PrintDialog";
 import StageDrawer from "@/components/stages/StageDrawer";
 import { StageWithPrice, OrderItem } from "@/types/stage";
 import { useStages } from "@/hooks/useStage";
 import { getGarmentTypes, GarmentType } from "@/lib/firebase/garment-types";
 import PriceSummary from "@/components/orders/PriceSummary";
 import OrderHistoryDrawer from "@/components/orders/OrderHistoryDrawer";
+import PrintDialog, { PriceType } from "@/components/orders/PrintDialog";
 import { printPDF } from "@/lib/print-pdf";
 import { saveOrder, Order } from "@/lib/firebase/order";
 
@@ -90,7 +90,7 @@ export default function StagesByMaterialPage() {
     }
   }, [orderItems, productCode, syncQty, materialId]);
 
-  const handlePrintConfirm = useCallback((priceType: "company" | "market") => {
+  const handlePrintConfirm = useCallback((priceType: PriceType) => {
     setPrintDialogOpen(false);
     printPDF(orderItems, garmentTypes, productCode, syncQty, priceType);
   }, [orderItems, garmentTypes, productCode, syncQty]);

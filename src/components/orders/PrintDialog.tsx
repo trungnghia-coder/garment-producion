@@ -1,52 +1,54 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, Store } from "lucide-react";
+import { Building2, Store, Columns2 } from "lucide-react";
+
+export type PriceType = "company" | "market" | "both";
 
 interface PrintDialogProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: (priceType: "company" | "market") => void;
+  onConfirm: (priceType: PriceType) => void;
 }
 
+const OPTIONS: { value: PriceType; label: string; color: string; Icon: React.ElementType }[] = [
+  { value: "company", label: "Giá xưởng", color: "#8B1A1A", Icon: Building2 },
+  { value: "market", label: "Giá ngoài", color: "#1A4A8B", Icon: Store },
+  { value: "both", label: "Cả hai", color: "#1D6B3B", Icon: Columns2 },
+];
+
 export default function PrintDialog({ open, onClose, onConfirm }: PrintDialogProps) {
-  const [selected, setSelected] = useState<"company" | "market">("company");
+  const [selected, setSelected] = useState<PriceType>("company");
 
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-2xl shadow-xl p-6 w-80">
+      <div className="bg-white rounded-2xl shadow-xl p-6 w-96">
         <h2 className="text-base font-semibold text-gray-800 mb-4">Chọn loại giá in PDF</h2>
 
         <div className="flex gap-3 mb-6">
-          <button
-            onClick={() => setSelected("company")}
-            className={`flex-1 flex flex-col items-center gap-2 py-4 rounded-xl border-2 transition-colors ${
-              selected === "company"
-                ? "border-[#8B1A1A] bg-[#8B1A1A]/5"
-                : "border-gray-200 hover:border-gray-300"
-            }`}
-          >
-            <Building2 size={24} className={selected === "company" ? "text-[#8B1A1A]" : "text-gray-400"} />
-            <span className={`text-sm font-medium ${selected === "company" ? "text-[#8B1A1A]" : "text-gray-600"}`}>
-              Giá công ty
-            </span>
-          </button>
-
-          <button
-            onClick={() => setSelected("market")}
-            className={`flex-1 flex flex-col items-center gap-2 py-4 rounded-xl border-2 transition-colors ${
-              selected === "market"
-                ? "border-[#1A4A8B] bg-[#1A4A8B]/5"
-                : "border-gray-200 hover:border-gray-300"
-            }`}
-          >
-            <Store size={24} className={selected === "market" ? "text-[#1A4A8B]" : "text-gray-400"} />
-            <span className={`text-sm font-medium ${selected === "market" ? "text-[#1A4A8B]" : "text-gray-600"}`}>
-              Giá thị trường
-            </span>
-          </button>
+          {OPTIONS.map(({ value, label, color, Icon }) => {
+            const isSelected = selected === value;
+            return (
+              <button
+                key={value}
+                onClick={() => setSelected(value)}
+                className={`flex-1 flex flex-col items-center gap-2 py-4 rounded-xl border-2 transition-colors ${
+                  isSelected ? "bg-opacity-5" : "border-gray-200 hover:border-gray-300"
+                }`}
+                style={isSelected ? { borderColor: color, backgroundColor: `${color}10` } : {}}
+              >
+                <Icon size={24} style={{ color: isSelected ? color : "#9ca3af" }} />
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: isSelected ? color : "#4b5563" }}
+                >
+                  {label}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="flex gap-3">
@@ -58,7 +60,8 @@ export default function PrintDialog({ open, onClose, onConfirm }: PrintDialogPro
           </button>
           <button
             onClick={() => onConfirm(selected)}
-            className="flex-1 py-2 text-sm font-medium text-white bg-[#8B1A1A] rounded-lg hover:bg-[#9B1A1A] transition-colors"
+            className="flex-1 py-2 text-sm font-medium text-white rounded-lg transition-colors"
+            style={{ backgroundColor: OPTIONS.find((o) => o.value === selected)?.color }}
           >
             In PDF
           </button>
