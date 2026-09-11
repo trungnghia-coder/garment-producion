@@ -37,6 +37,7 @@ interface OrderTableProps {
   onProductCodeChange: (code: string) => void;
   garmentTypes: GarmentType[];
   onViewDetail: (item: OrderItem) => void;
+  onExportExcel: () => void;
 }
 
 const PINNED_KEY = "pinned_stage_ids";
@@ -167,6 +168,7 @@ export default function OrderTable({
   onProductCodeChange,
   garmentTypes = [],
   onViewDetail,
+  onExportExcel,
 }: OrderTableProps) {
   const [pinnedIds, setPinnedIds] = useState<string[]>(() => getPinnedIds());
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -316,6 +318,9 @@ export default function OrderTable({
         </button>
         <button onClick={onClear} className="px-5 py-2 text-sm font-medium text-gray-800 bg-[#F0B429] rounded-lg hover:bg-[#e0a820] transition-colors">
           Xóa
+        </button>
+        <button onClick={onExportExcel} className="px-5 py-2 text-sm font-medium text-white bg-[#1D6B3B] rounded-lg hover:bg-[#185e33] transition-colors">
+          Xuất Excel
         </button>
         <button onClick={onExport} className="px-5 py-2 text-sm font-medium text-white bg-[#8B1A1A] rounded-lg hover:bg-[#9B1A1A] transition-colors">
           In PDF
