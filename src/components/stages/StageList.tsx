@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import StageItem from "./StageItem";
 import { StageWithPrice } from "@/types/stage";
 import { GarmentType } from "@/lib/firebase/garment-types";
 
 interface StageListProps {
-  stages: StageWithPrice [];
+  stages: StageWithPrice[];
   selectedIds: Set<string>;
   onToggle: (stage: StageWithPrice) => void;
   onAdd: () => void;
@@ -18,12 +18,19 @@ export default function StageList({
   selectedIds,
   onToggle,
   onAdd,
-  garmentTypes
+  garmentTypes,
 }: StageListProps) {
   const [search, setSearch] = useState("");
+  const [filterTypeId, setFilterTypeId] = useState("");
 
-  const filtered = stages.filter((s) =>
-    s.name.toLowerCase().includes(search.toLowerCase())
+  const filtered = useMemo(
+    () =>
+      stages.filter((s) => {
+        const matchSearch = s.name.toLowerCase().includes(search.toLowerCase().trim());
+        const matchType = filterTypeId ? s.type_id === filterTypeId : true;
+        return matchSearch && matchType;
+      }),
+    [stages, search, filterTypeId],
   );
 
   return (
@@ -45,6 +52,33 @@ export default function StageList({
         </button>
       </div>
 
+      {/* Filter loại công đoạn */}
+      <div className="px-3 py-2 border-b border-gray-200 flex gap-2 overflow-x-auto">
+        <button
+          onClick={() => setFilterTypeId("")}
+          className={`shrink-0 px-3 py-1 text-xs rounded-full border transition-colors ${
+            filterTypeId === ""
+              ? "bg-[#8B1A1A] text-white border-[#8B1A1A]"
+              : "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
+          }`}
+        >
+          Tất cả
+        </button>
+        {garmentTypes.map((type) => (
+          <button
+            key={type.id}
+            onClick={() => setFilterTypeId(type.id)}
+            className={`shrink-0 px-3 py-1 text-xs rounded-full border transition-colors ${
+              filterTypeId === type.id
+                ? "bg-[#8B1A1A] text-white border-[#8B1A1A]"
+                : "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
+            }`}
+          >
+            {type.name}
+          </button>
+        ))}
+      </div>
+
       {/* List */}
       <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-0.5">
         {filtered.length === 0 ? (
@@ -58,7 +92,7 @@ export default function StageList({
               stage={stage}
               isSelected={selectedIds.has(stage.id)}
               onToggle={onToggle}
-              garmentTypes={garmentTypes} 
+              garmentTypes={garmentTypes}
             />
           ))
         )}

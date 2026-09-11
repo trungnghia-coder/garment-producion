@@ -14,6 +14,7 @@ import OrderHistoryDrawer from "@/components/orders/OrderHistoryDrawer";
 import PrintDialog, { PriceType } from "@/components/orders/PrintDialog";
 import { printPDF } from "@/lib/print-pdf";
 import { saveOrder, Order } from "@/lib/firebase/order";
+import { exportExcel } from "@/lib/export-excel";
 
 export default function StagesByMaterialPage() {
   const { materialId } = useParams<{ materialId: string }>();
@@ -114,6 +115,14 @@ export default function StagesByMaterialPage() {
  
   const handleViewDetail = (stage: StageWithPrice) => setStageDrawer({ open: true, mode: "edit", stage });
 
+  const handleExportExcel = useCallback(() => {
+    if (orderItems.length === 0) {
+      alert("Chưa có công đoạn nào trong bảng!");
+      return;
+    }
+    exportExcel(orderItems, garmentTypes, productCode, syncQty, "both");
+  }, [orderItems, garmentTypes, productCode, syncQty]);
+
   const handleSaved = useCallback(async () => {
     const updatedStages = await refresh() as StageWithPrice[];
     const stageMap = new Map(updatedStages.map((s) => [s.id, s]));
@@ -190,6 +199,7 @@ export default function StagesByMaterialPage() {
           onHistory={() => setHistoryOpen(true)}
           onReorder={handleReorder}
           onViewDetail={handleViewDetail}
+          onExportExcel={handleExportExcel}
         />
         <OrderHistoryDrawer
           open={historyOpen}
