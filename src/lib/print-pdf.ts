@@ -18,7 +18,7 @@ const BLACK: [number, number, number] = [0, 0, 0];
 // ── Shared table config —
 const BASE_TABLE_STYLES: Partial<Styles> = {
   fontSize: 8,
-  cellPadding: 1.5,
+  cellPadding: 1,
   font: "NotoSans",
   textColor: BLACK,
   lineColor: BLACK,
@@ -30,7 +30,7 @@ const HEAD_STYLES: Partial<Styles> = {
   textColor: BLACK,
   lineColor: BLACK,
   lineWidth: 0.2,
-  minCellHeight: 6,
+  minCellHeight: 5,
 };
 
 const GRAY_CELL = { fillColor: GRAY, textColor: BLACK };
@@ -44,12 +44,12 @@ const COL = {
   slCat: 9,
   price: 12,
   priceCompact: 15,
-  xuongMay: 52,
-  ngoaiMay: 52,
-  xuongMayNarrow: 48,
-  ngoaiMayNarrow: 48,
-  tenSingle: 71,
-  tenBoth: 53,
+  xuongMay: 53,
+  ngoaiMay: 53,
+  xuongMayNarrow: 57,
+  ngoaiMayNarrow: 57,
+  tenSingle: 53,
+  tenBoth: 47,
 };
 
 // ── Helpers ───────────────────────────────────────────────
@@ -64,43 +64,23 @@ function setupDoc(): jsPDF {
 }
 
 function printHeader(doc: jsPDF, productCode: string, syncQty: number) {
-  doc.setFontSize(11);
+  doc.setFontSize(7);
   doc.setFont("NotoSans", "bold");
-  doc.text("CÔNG TY CỔ PHẦN THỜI TRANG HALEN VIỆT NAM", 105, 14, {
-    align: "center",
-  });
-  doc.setFontSize(10);
+  doc.text("CÔNG TY CỔ PHẦN THỜI TRANG HALEN VIỆT NAM", 5, 10);
+  doc.setFontSize(7);
   doc.setFont("NotoSans", "normal");
-  doc.text("PHÒNG KỸ THUẬT", 105, 19, { align: "center" });
-  doc.setFontSize(13);
+  doc.text("PHÒNG KỸ THUẬT", 5, 14);
+  doc.setFontSize(9);
   doc.setFont("NotoSans", "bold");
-  doc.text("QUI TRÌNH CÔNG ĐOẠN SẢN XUẤT", 105, 27, { align: "center" });
-  doc.setFontSize(10);
+  doc.text("QUI TRÌNH CÔNG ĐOẠN SẢN XUẤT", 105, 20, { align: "center" });
+  doc.setFontSize(7);
   doc.setFont("NotoSans", "normal");
-  doc.text(`Mã sản phẩm: ${productCode}`, 5, 35);
-  doc.text(`Số lượng: ${syncQty} bộ`, 5, 41);
+  doc.text(`Mã sản phẩm: ${productCode}`, 5, 26);
+  doc.text(`Số lượng: ${syncQty} bộ`, 5, 30);
 }
 
 function fmt(n: number) {
   return n.toLocaleString("vi-VN");
-}
-
-function grayGroupRow(
-  typeName: string,
-  syncQty: number,
-  prices: string[],
-  colSpanName = 2,
-): RowInput {
-  return [
-    { content: "", styles: GRAY_BOLD },
-    {
-      content: typeName,
-      colSpan: colSpanName,
-      styles: { ...GRAY_BOLD, halign: "center" },
-    },
-    // empty cells for may columns — filled by caller
-    ...prices.map((p) => ({ content: p, styles: { ...GRAY_BOLD, ...RIGHT } })),
-  ];
 }
 
 function itemRow(
@@ -190,7 +170,7 @@ function buildSinglePricePDF(
   const priceLabel = priceType === "company" ? "Giá xưởng" : "Giá ngoài";
 
   autoTable(doc, {
-    startY: 47,
+    startY: 31,
     head: [
       [
         {
@@ -286,7 +266,7 @@ function buildBothPricePDF(
   );
 
   autoTable(doc, {
-    startY: 47,
+    startY: 31,
     head: [
       [
         {
