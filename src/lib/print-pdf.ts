@@ -46,8 +46,8 @@ const COL = {
   priceCompact: 15,
   xuongMay: 52,
   ngoaiMay: 52,
-  xuongMayNarrow: 38,
-  ngoaiMayNarrow: 32,
+  xuongMayNarrow: 48,
+  ngoaiMayNarrow: 48,
   tenSingle: 71,
   tenBoth: 53,
 };
@@ -129,6 +129,7 @@ function buildRows(
 ): RowInput[] {
   const rows: RowInput[] = [];
   let isFirst = true;
+  let globalIdx = 0;
 
   garmentTypes.forEach((type) => {
     const typeItems = items.filter((i) => i.type_id === type.id);
@@ -143,8 +144,8 @@ function buildRows(
           colSpan: 2,
           styles: { ...GRAY_BOLD, halign: "center" },
         },
-        { content: "", styles: GRAY_BOLD }, // Xưởng may
-        { content: "", styles: GRAY_BOLD }, // Ngoài may
+        { content: "", styles: GRAY_BOLD },
+        { content: "", styles: GRAY_BOLD },
         ...totals.map((t) => ({
           content: t,
           styles: { ...GRAY_BOLD, ...RIGHT },
@@ -153,15 +154,15 @@ function buildRows(
     }
     isFirst = false;
 
-    typeItems.forEach((item, idx) => {
-      rows.push(itemRow(item, idx, syncQty, getPrices(item)));
+    typeItems.forEach((item) => {
+      rows.push(itemRow(item, globalIdx, syncQty, getPrices(item)));
+      globalIdx++;
     });
   });
 
   return rows;
 }
 
-// ── Single price (company hoặc market) ───────────────────
 function buildSinglePricePDF(
   doc: jsPDF,
   items: OrderItem[],
